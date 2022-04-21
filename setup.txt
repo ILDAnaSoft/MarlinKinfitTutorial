@@ -1,0 +1,178 @@
+# always use BASH, else DD4HEP is unhappy
+
+bash
+
+# source iLCSoft setup
+
+. /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/v02-02-03/init_ilcsoft.sh
+
+# get head version of MarlinKinfitProcessors
+
+git clone https://github.com/iLCSoft/MarlinKinfitProcessors.git
+
+# compile MarlinKinfitProcessors (or analogously any processor)
+
+cd MarlinKinfitProcessors
+mkdir build
+cd build
+
+
+cmake -C $ILCSOFT/ILCSoft.cmake ..
+
+make
+make install
+
+cd ..
+
+# set MARLIN_DLL 
+# get basic setting to central installtion by
+# echo MARLIN_DLL - then add and/or adjust paths of your local processors!
+
+export MARLIN_DLL=/afs/desy.de/user/b/boehmej/afspool/boehmej/MarlinWorkdirs/MarlinKinfitTutorial/AddNeutralPFOCovMat/lib/libAddNeutralPFOCovMat.so:/afs/desy.de/user/b/boehmej/afspool/boehmej/MarlinWorkdirs/MarlinKinfitTutorial/HdecayMode/lib/libHdecayMode.so:/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/v02-02-03/MarlinDD4hep/v00-06/lib/libMarlinDD4hep.so:/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/v02-02-03/DDMarlinPandora/v00-12/lib/libDDMarlinPandora.so:/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/v02-02-03/MarlinReco/v01-32/lib/libMarlinReco.so:/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/v02-02-03/PandoraAnalysis/v02-00-01/lib/libPandoraAnalysis.so:/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/v02-02-03/LCFIVertex/v00-08/lib/libLCFIVertexProcessors.so:/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/v02-02-03/CEDViewer/v01-19/lib/libCEDViewer.so:/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/v02-02-03/Overlay/v00-22-03/lib/libOverlay.so:/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/v02-02-03/MarlinFastJet/v00-05-02/lib/libMarlinFastJet.so:/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/v02-02-03/LCTuple/v01-13/lib/libLCTuple.so:/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/v02-02-03/MarlinKinfit/v00-06/lib/libMarlinKinfit.so:/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/v02-02-03/MarlinTrkProcessors/v02-12/lib/libMarlinTrkProcessors.so:/afs/desy.de/user/b/boehmej/afspool/boehmej/MarlinWorkdirs/MarlinKinfitTutorial/MarlinKinfitProcessors/lib/libMarlinKinfitProcessors.so:/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/v02-02-03/ILDPerformance/v01-10/lib/libILDPerformance.so:/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/v02-02-03/Clupatra/v01-03/lib/libClupatra.so:/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/v02-02-03/Physsim/v00-04-01/lib/libPhyssim.so:/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/v02-02-03/LCFIPlus/v00-10-01/lib/libLCFIPlus.so:/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/v02-02-03/FCalClusterer/v01-00-01/lib/libFCalClusterer.so:/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/v02-02-03/ForwardTracking/v01-14/lib/libForwardTracking.so:/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/v02-02-03/ConformalTracking/v01-11/lib/libConformalTracking.so:/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/v02-02-03/LICH/v00-01/lib/libLICH.so:/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/v02-02-03/Garlic/v03-01/lib/libGarlic.so:
+
+
+
+################################################################################################
+
+# only if needed: get empty example processor
+
+cp -pr $ILCSOFT/Marlin/v02-02-03/examples/ .
+
+cd examples/mymarlin
+
+[open CMakeLists.txt in editor, uncomment the AIDA block (otherwise no histograms...), save, quit :-)]
+
+Marlin -x > marlin.xml
+
+[open marlin.xml in editor, 
+ copy by mouse into a new file:   
+   - the opening of the <marlin> ... block
+   - the <execute> block
+   - the <golbal> block
+   - the AIDAProcessor block
+   - the MyProcessor block
+ change   
+   - in <execute>: MyTestProcessor to MyMyProcessor
+   - in <execute>: comment out MyLCIOOutputProcessor
+   - in <global>: change simjob.slcio to name of your input file
+   - in <global>: limit MaxRecordNumber to eg 11 (= 10 events)
+   - in AIDAProcessor: change name of output rootfile to mymarlin (or whatever you want)
+should result in what is pasted below]   
+   
+ln -s /pnfs/desy.de/ilc/prod/ilc/mc-opt-3/ild/dst-merged/500-TDR_ws/2f_Z_hadronic/ILD_l5_o1_v02/v02-00-01/rv02-00-01.sv02-00-01.mILD_l5_o1_v02.E500-TDR_ws.I250114.P2f_z_h.eL.pR.n001.d_dstm_10410_0.slcio
+
+[or change file name in steering to whatever you need]
+   
+Marlin mymarlin.xml
+
+root -l mymarlin.root
+
+TBrowser b;
+
+*********************************************************************************************
+
+now copy to new processor name:
+
+cd ..    
+
+[should be in examples now]
+
+./copy_new_Processor.sh mymarlin DiMuonMassProcessor
+
+[now you should have a new subdirectory DiMuonMassProcessor]
+
+cd DiMuonMassProcessor
+
+[just to be on the safe side:]
+rm -rf build
+mkdir build     
+
+cd build
+
+cmake -C $ILCSOFT/ILCSoft.cmake ..
+
+make
+make install
+
+cd ..
+
+export MARLIN_DLL=/afs/desy.de/group/flc/pool/boehmej/MarlinWorkdirTest/DiMuonMassProcessor/lib/libDiMuonMassProcessor.so:$MARLIN_DLL
+
+[open marlin.xml in editor and replace 
+      - MyProcessor by DiMuonMassProcessor, 
+      - MyMyProcessor by MyDiMuonMassProcessor
+      - optionally change root file name etc]
+      
+Marlin mymarlin.xml
+
+root -l mymarlin.root
+
+TBrowser b;
+
+
+
+
+============================================================================================
+
+<!--##########################################
+    #                                        #
+    #     Example steering file for marlin   #
+    #                                        #
+    ##########################################-->
+
+
+<marlin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ilcsoft.desy.de/marlin/marlin.xsd">
+ <constants>
+  <!-- define constants here - use in steering file as ${ConstantName} --> 
+  <!--constant name="DetectorModel" value="ILD_l5_o1_v02" /-->
+ </constants>
+
+ <execute>
+  <!--processor name="MyEventSelector"/--> 
+  <!--if condition="MyEventSelector"-->    
+   <processor name="MyAIDAProcessor"/>
+   <processor name="MyMyProcessor"/>  
+  <!--processor name="MyLCIOOutputProcessor"/-->  
+  <!--/if-->                                 
+ </execute>
+
+ <global>
+  <parameter name="LCIOInputFiles"> rv02-00-01.sv02-00-01.mILD_l5_o1_v02.E500-TDR_ws.I250114.P2f_z_h.eL.pR.n001.d_dstm_10410_0.slcio </parameter>
+  <!-- limit the number of processed records (run+evt): -->  
+  <parameter name="MaxRecordNumber" value="11" />  
+  <parameter name="SkipNEvents" value="0" />  
+  <parameter name="SupressCheck" value="false" />  
+  <parameter name="AllowToModifyEvent" value="false" />  
+  <parameter name="GearXMLFile"></parameter>  
+  <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> DEBUG  </parameter> 
+  <parameter name="RandomSeed" value="1234567890" />
+  <!-- optionally limit the collections that are read from the input file: -->  
+  <!--parameter name="LCIOReadCollectionNames">MCParticle PandoraPFOs</parameter-->
+ </global>
+
+
+ <processor name="MyAIDAProcessor" type="AIDAProcessor">
+ <!--Processor that handles AIDA files. Creates on directory per processor.  Processors only need to create and fill the histograms, clouds and tuples. Needs to be the first ActiveProcessor-->
+  <!-- compression of output file 0: false >0: true (default) -->
+  <parameter name="Compress" type="int">1 </parameter>
+  <!-- filename without extension-->
+  <parameter name="FileName" type="string">mymarlin </parameter>
+  <!-- type of output file root (default) or xml )-->
+  <parameter name="FileType" type="string">root </parameter>
+  <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
+  <!--parameter name="Verbosity" type="string">DEBUG </parameter-->
+</processor>
+
+<processor name="MyMyProcessor" type="MyProcessor">
+ <!--MyProcessor does whatever it does ...-->
+  <!--Name of the MCParticle collection-->
+  <parameter name="CollectionName" type="string" lcioInType="MCParticle">MCParticle </parameter>
+  <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
+  <!--parameter name="Verbosity" type="string">DEBUG </parameter-->
+</processor>
+
+</marlin>
+
+
+################################################################################################
+
