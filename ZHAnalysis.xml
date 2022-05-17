@@ -19,13 +19,9 @@
       <processor name="MyAddNeutralPFOCovMatLite" condition="" />
       <processor name="MyIsolatedLeptonTaggingProcessor" condition="" /> 
       <processor name="MyFastJetProcessor"/>
-      <!--processor name="MyJetIsoLepDeclustering"/> 
-      <processor name="MyFastJetProcessorRerun"/-->
       <processor name="MyErrorFlow" condition="" />
       <processor name="MyZHllqqFit" condition="" />
       <processor name="MyLCIOOutputProcessor"/>
-      <!--processor name="MyExampleEDM4hepOutputProcessor"/--> 
-
     </if>
   </execute>
   
@@ -79,7 +75,7 @@
     <!--true: Use (mathematically) true Jacobian for the option E_cluster = |p|, false: for the option E_cluster = |p|, Use the same jacobian as the option E_cluster = E_kinetic-->
     <parameter name="useTrueJacobian" type="bool">false</parameter>
     <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
-    <parameter name="Verbosity" type="string">MESSAGE</parameter>
+    <parameter name="Verbosity" type="string">WARNING</parameter>
   </processor>
   
   <processor name="MyHdecayMode" type="HdecayMode">
@@ -91,7 +87,7 @@
     <!--Names of the Output Higgs decay mode collection-->
     <parameter name="HdecayModeCollection" type="string" lcioOutType="MCParticle">HdecayMode </parameter>
     <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
-    <parameter name="Verbosity" type="string">MESSAGE </parameter>
+    <parameter name="Verbosity" type="string">WARNING </parameter>
   </processor>
 
   <processor name="MyIsolatedLeptonTaggingProcessor" type="IsolatedLeptonTaggingProcessor">
@@ -143,7 +139,7 @@
     <!--use yoke for muon ID-->
     <parameter name="UseYokeForMuonID" type="bool">false</parameter>
     <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
-    <parameter name="Verbosity" type="string">MESSAGE</parameter>
+    <parameter name="Verbosity" type="string">WARNING</parameter>
   </processor>
 
   <processor name="MyFastJetProcessor" type="FastJetProcessor">
@@ -169,54 +165,6 @@
     <parameter name="findNrJets"> 2 </parameter>
     <!--Prefix of identified jets-->
     <parameter name="findNrJetsCollectionPrefix"> Jets_ </parameter>
-  </processor>
-
-  <processor name="MyJetIsoLepDeclustering" type="JetIsoLepDeclustering">
-    <!--EventSelector identifies Z/Higgs decay mode and declusters jet particles in case of more than 2 IsoLep, just for ZH/ZZ->ll** events-->
-    <!--Name of input jet collection-->
-    <parameter name="JetCollection" type="string" lcioInType="ReconstructedParticle">Durham_2Jets</parameter>
-    <!--Name of input Isolated Lepton collection-->
-    <parameter name="isoLepCollection" type="string" lcioInType="ReconstructedParticle">ISOLeptons</parameter>
-    <!--Name of output pfo collection-->
-    <parameter name="outputPfoCollection" type="string" lcioOutType="ReconstructedParticle">declusteredJetIsoleps</parameter>
-    <!--Name of output isolated lepton collection-->
-    <parameter name="outputIsolepCollection" type="string" lcioOutType="ReconstructedParticle">IsolatedLeptons</parameter>
-    <!--look for this number of jets-->
-    <parameter name="nJets" type="int">2 </parameter>
-    <!--look for this number of isolated leptons-->
-    <parameter name="nIsoLeps" type="int">2 </parameter>
-    <!--Whether create root file for new pfo collection or not true:create / false: do not create-->
-    <parameter name="fillRootTree" type="bool">false</parameter>
-    <!--Name of the output root file-->
-    <parameter name="RootFile" type="string">${OutputDirectory}/IsoLeptonJetDeclustered.root</parameter>
-    <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
-    <parameter name="Verbosity" type="string">MESSAGE </parameter>
-  </processor>
-
-  <processor name="MyFastJetProcessorRerun" type="FastJetProcessor">
-    <!--Using the FastJet library to identify jets-->
-    <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
-    <parameter name="Verbosity" type="string">MESSAGE </parameter>
-    <!--Selects the algorithm and its parameters. E.g. 'kt_algorithm 0.7' or 'ee_kt_algorithm'. For a full list of supported algorithms, see the logfile after execution.-->
-    <parameter name="algorithm" type="StringVec">ee_kt_algorithm</parameter>
-    <!--One of 'Inclusive <minPt>',_Nu 'InclusiveIterativeNJets <nrJets> <minE>', 'ExclusiveNJets <nrJets>', 'ExclusiveYCut <yCut>'. Note: not all modes are available for all algorithms.-->
-    <parameter name="clusteringMode" type="StringVec">ExclusiveNJets 2 </parameter>
-    <!--The identified jets-->
-    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle">Durham_2JetsNew </parameter>
-    <!--a list of all reconstructed particles we are searching for jets in.-->
-    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle">declusteredJetIsoleps</parameter>
-    <!--parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle">PFOsWithoutOverlay</parameter-->
-    <!--a list of all reconstructed particles we are storing for jets in.-->
-    <parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle">Durham_2JetsPFOsNew </parameter>
-    <!--The recombination scheme used when merging 2 particles. Usually there is no need to use anything else than 4-Vector addition: E_scheme-->
-    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
-    <!--Store the list of particles that were clustered into jets in the recParticleOut collection-->
-    <parameter name="storeParticlesInJets" type="bool">true </parameter>
-    <!--Number of identified jets-->
-    <parameter name="findNrJets"> 2 </parameter>
-    <!--Prefix of identified jets-->
-    <parameter name="findNrJetsCollectionPrefix"> NewJets_ </parameter>
-    <parameter name="Verbosity" type="string">MESSAGE</parameter>
   </processor>
 
   <processor name="MyErrorFlow" type="ErrorFlow">
@@ -272,7 +220,7 @@
     <!-- name of Output root file -->
     <parameter name="outputFilename">${OutputDirectory}/root/${OutputBaseName}_${OutputBaseName}.root</parameter>
     <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
-    <parameter name="Verbosity" type="string">MESSAGE</parameter>
+    <parameter name="Verbosity" type="string">WARNING</parameter>
   </processor>
 
   <processor name="MyLCIOOutputProcessor" type="LCIOOutputProcessor">
@@ -296,16 +244,5 @@
   </processor>
 
   
-  <processor name="MyExampleEDM4hepOutputProcessor" type="ExampleEDM4hepOutputProcessor">
-    <parameter name="LCIOInputFiles"> {OutputDirectory}/slcio/${OutputBaseName}.slcio </parameter>             
-    <!--ExampleEDM4hepOutputProcessor shows how to write EDM4hep output files from within a Marlin processor-->
-    <!--Output file in EDM4hep format that will be filled-->                                  
-    <parameter name="EDM4hepOutputFile" type="string">edm4hep_outputs.root </parameter>             
-    <!--The MCParticle collection to store in EDM4hep format-->                           
-    <parameter name="FitReco" type="string">ReconstructedParticle</parameter>                       
-    <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->     -- 
-    <parameter name="Verbosity" type="string">WARNING </parameter>
-  </processor> 
-
 
 </marlin>
